@@ -15,9 +15,11 @@ const productSchema = new Schema(
             type: String,
             require: true,
         },
+        size: {
+            type: [String],
+        },
         description: {
             type: String,
-            maxLength: 600,
         },
         price_discount: {
             type: String,
@@ -26,7 +28,7 @@ const productSchema = new Schema(
             type: String,
         },
         thumbnail: {
-            type: String,
+            type: [String],
             default: "url_img_thumbnail_product",
         },
         category: {
@@ -51,12 +53,6 @@ const productSchema = new Schema(
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "ReceiptEnterDetail",
-            },
-        ],
-        receiptEnterWarehouses: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "ReceiptEnterWarehouse",
             },
         ],
 

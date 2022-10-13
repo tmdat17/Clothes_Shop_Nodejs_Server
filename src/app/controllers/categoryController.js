@@ -16,7 +16,12 @@ const categoryController = {
     // [GET] /category (get all categorys)
     getAllCategory: async (req, res) => {
         try {
-            const categorys = await Category.find();
+            const categorys = await Category.find()
+                .sort({ category_id: 1 })
+                .populate(
+                    "products",
+                    "product_id name_product color price price_discount size deleted"
+                );
             res.status(200).json(categorys);
         } catch (error) {
             res.status(500).json(error);

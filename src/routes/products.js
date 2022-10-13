@@ -12,13 +12,13 @@ router.get("/", productController.getAllProduct);
 // Get detail one product
 router.get("/:id", productController.getOneProduct);
 
-// Update product
+// Update one product
 router.put("/update/:id", productController.updateProduct);
 
 // Soft Delete Product
 router.put("/softdelete/:id", productController.softDeleteProduct);
 
-// Deleted product
+// Delete product
 router.delete("/delete/:id", productController.deleteProduct);
 
 module.exports = router;
