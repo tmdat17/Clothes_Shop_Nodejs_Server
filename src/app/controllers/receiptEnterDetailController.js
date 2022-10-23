@@ -13,6 +13,9 @@ const receiptEnterDetailController = {
                 await product.updateOne({
                     $push: { receiptEnterDetails: savedReceiptEnterDetail._id },
                 });
+                await product.updateOne({
+                    $inc: { remain_quantity: savedReceiptEnterDetail.amount },
+                });
             }
 
             if (req.body.receiptEnterWarehouse) {
@@ -62,7 +65,28 @@ const receiptEnterDetailController = {
         try {
             const receiptEnterDetailNeedUpdate =
                 await ReceiptEnterDetail.findById(req.params.id);
-            await receiptEnterDetailNeedUpdate.updateOne({ $set: req.body });
+            if (req.body.amount) {
+                const product = await Product.findById(
+                    receiptEnterDetailNeedUpdate.product
+                );
+                // trừ số lượng cũ
+                await product.updateOne({
+                    $inc: {
+                        remain_quantity: -Number(
+                            receiptEnterDetailNeedUpdate.amount
+                        ),
+                    },
+                });
+
+                // cộng số lượng mới
+                await product.updateOne({
+                    $inc: { remain_quantity: req.body.amount },
+                });
+            }
+            await receiptEnterDetailNeedUpdate.updateOne({
+                $set: req.body,
+            });
+
             res.status(200).json("Updated ReceiptEnterDetail Successfully!!");
         } catch (error) {
             res.status(500).json(error);
@@ -88,12 +112,25 @@ const receiptEnterDetailController = {
     // [DELETE] /receiptEnterDetail/delete/:id (Delete one receiptEnterDetail)
     deleteReceiptEnterDetail: async (req, res) => {
         try {
-            const product = await Product.updateOne(
+            const receiptEnterDetailNeedDelete =
+                await ReceiptEnterDetail.findById(req.params.id);
+
+            const product = Product.findById(
+                receiptEnterDetailNeedDelete.product
+            );
+            await product.updateOne({
+                $inc: {
+                    remain_quantity: -Number(
+                        receiptEnterDetailNeedDelete.amount
+                    ),
+                },
+            });
+            product.updateOne(
                 { receiptEnterDetails: req.params.id },
                 { $pull: { receiptEnterDetails: req.params.id } }
             );
 
-            const receiptEnterWarehouse = await ReceiptEnterWarehouse.updateOne(
+            await ReceiptEnterWarehouse.updateOne(
                 { receiptEnterDetails: req.params.id },
                 { $pull: { receiptEnterDetails: req.params.id } }
             );

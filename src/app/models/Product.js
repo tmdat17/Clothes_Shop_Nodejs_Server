@@ -18,6 +18,10 @@ const productSchema = new Schema(
         size: {
             type: [String],
         },
+        remain_quantity: {
+            type: Number,
+            default: 0,
+        },
         description: {
             type: String,
         },
