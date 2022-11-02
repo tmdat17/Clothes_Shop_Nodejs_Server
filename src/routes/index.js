@@ -6,6 +6,8 @@ const galeryRouter = require("./galerys");
 const warehouseRouter = require("./warehouses");
 const receiptEnterDetailRouter = require("./receiptEnterDetails");
 const receiptEnterWarehouseRouter = require("./receiptEnterWarehouses");
+const authRouter = require("./auth");
+const userRouter = require("./user");
 
 function route(app) {
     app.use("/product", productRouter);
@@ -14,6 +16,8 @@ function route(app) {
     app.use("/receiptEnterDetail", receiptEnterDetailRouter);
     app.use("/receiptEnterWarehouse", receiptEnterWarehouseRouter);
     app.use("/warehouse", warehouseRouter);
+    app.use("/auth", authRouter);
+    app.use("/user", userRouter);
 }
 
 module.exports = route;
