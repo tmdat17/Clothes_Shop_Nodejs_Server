@@ -1,16 +1,19 @@
+const dotenv = require("dotenv");
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
 const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
 
-dotenv.config();
 const db = require("./config/db");
 const route = require("./routes");
 
-const PORT = process.env.port || 5000;
+dotenv.config();
+
+const PORT = process.env.PORT || 5555;
 const app = express();
 
 app.use(cors());
+app.use(cookieParser());
 app.use(morgan("combined"));
 app.use(express.json());
 
