@@ -44,7 +44,7 @@ const authController = {
                 admin: user.admin,
             },
             process.env.JWT_ACCESS_KEY,
-            { expiresIn: "20s" }
+            { expiresIn: "3d" }
         );
     },
 
@@ -82,6 +82,7 @@ const authController = {
                 // khi nhập đúng phone và password thì mới tạo jwt
                 const accessToken = authController.generateAccessToken(user);
                 const refreshToken = authController.generateRefreshToken(user);
+
                 refreshTokens.push(refreshToken);
 
                 // lưu refreshToken qua Cookie
@@ -91,6 +92,7 @@ const authController = {
                     path: "/", // không có cũng không sao
                     sameSite: "strict", // ngăn chặn tấn công CSRF (sameSite nghĩa là các http request chỉ đến tử cái site này thôi )
                 });
+
                 const { password, accept_password, ...others } = user._doc;
 
                 res.status(200).json({ ...others, accessToken });

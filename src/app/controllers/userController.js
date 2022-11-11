@@ -11,6 +11,28 @@ const userController = {
         }
     },
 
+    // [GET] /user/:id (get detail one user)
+    getOneUser: async (req, res) => {
+        try {
+            const user = await User.findById(req.params.id);
+            const { password, accept_password, ...others } = user._doc;
+            res.status(200).json({ ...others });
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    },
+
+    // [PUT] /user/update/:id  (update infor user)
+    updateUser: async (req, res) => {
+        try {
+            const userNeedUpdate = await User.findById(req.params.id);
+            await userNeedUpdate.updateOne({ $set: req.body });
+            res.status(200).json("Updated User Successfully!!");
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    },
+
     // [PUT] /user/softdelete/:id   (Soft Delete User)
     softDeleteUser: async (req, res) => {
         try {
