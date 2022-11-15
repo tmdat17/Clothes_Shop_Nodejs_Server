@@ -5,8 +5,7 @@ const userSchema = new Schema(
     {
         fullname: {
             type: String,
-            //require: true,
-            // maxlength: 30,
+            require: true,
         },
         phone: {
             type: String,
@@ -33,6 +32,12 @@ const userSchema = new Schema(
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Order",
+            },
+        ],
+        cart: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Product",
             },
         ],
         admin: {

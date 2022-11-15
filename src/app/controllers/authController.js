@@ -16,7 +16,7 @@ const authController = {
             );
             if (hashed_password !== hashed_accept_password) {
                 res.status(400).json(
-                    "Mật khẩu và xác nhận mật khẩu không chính xác"
+                    "Mật khẩu và xác nhận mật khẩu không khớp"
                 );
                 return;
             }
@@ -44,6 +44,7 @@ const authController = {
                 admin: user.admin,
             },
             process.env.JWT_ACCESS_KEY,
+            // { expiresIn: "3d" }
             { expiresIn: "3d" }
         );
     },
@@ -66,7 +67,7 @@ const authController = {
             // tim theo sdt
             const user = await User.findOne({ phone: req.body.phone });
             if (!user) {
-                res.status(404).json("Wrong numberphone!!!");
+                res.status(404).json("Số điện thoại không chính xác!!");
                 return;
             }
             // compare password user input and password in mongoose (xác thực pw)
@@ -75,7 +76,7 @@ const authController = {
                 user.password
             );
             if (!validPassword) {
-                res.status(404).json("Wrong password");
+                res.status(404).json("Mật khẩu không chính xác!!");
                 return;
             }
             if (user && validPassword) {
@@ -89,7 +90,7 @@ const authController = {
                 res.cookie("refreshToken", refreshToken, {
                     httpOnly: true, // cookie này là httpOnly cookie
                     secure: false, // khi nào deploy thì set lại true
-                    path: "/", // không có cũng không sao
+                    path: "/user", // không có cũng không sao
                     sameSite: "strict", // ngăn chặn tấn công CSRF (sameSite nghĩa là các http request chỉ đến tử cái site này thôi )
                 });
 
@@ -108,6 +109,7 @@ const authController = {
             // take refresh token from user
             // req.cookies.refreshToken  (refreshToken là tên cookie)
             const refreshToken = req.cookies.refreshToken;
+            console.log("refreshTOken be:   ", refreshToken);
             if (!refreshToken)
                 return res.status(401).json("You're not authenticated!");
 
@@ -124,22 +126,25 @@ const authController = {
                         return;
                     }
                     // lọc lại refreshTokens bỏ đi những token đã cũ
-                    refreshTokens.filter((token) => {
-                        return token !== refreshToken;
-                    });
+                    // refreshTokens.filter((token) => {
+                    //     return token !== refreshToken;
+                    // });
+                    refreshTokens = refreshTokens.filter(
+                        (token) => token !== refreshToken
+                    );
                     // Nếu không lỗi thì tạo accessToken và refreshToken mới
                     const newAccessToken =
                         authController.generateAccessToken(user); //user do jwt payload qua
                     const newRefreshToken =
                         authController.generateRefreshToken(user);
+                    refreshTokens.push(newRefreshToken);
                     // khi có refreshToken mới thì lưu lại vào cookie
                     res.cookie("refreshToken", newRefreshToken, {
                         httpOnly: true, // cookie này là httpOnly cookie
                         secure: false, // khi nào deploy thì set lại true
-                        path: "/", // không có cũng không sao
+                        path: "/user", // không có cũng không sao
                         sameSite: "strict", // ngăn chặn tấn công CSRF (sameSite nghĩa là các http request chỉ đến tử cái site này thôi )
                     });
-                    refreshTokens.push(newRefreshToken);
                     res.status(200).json(newAccessToken);
                 }
             );

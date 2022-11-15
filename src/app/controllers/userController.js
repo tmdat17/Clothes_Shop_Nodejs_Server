@@ -14,7 +14,10 @@ const userController = {
     // [GET] /user/:id (get detail one user)
     getOneUser: async (req, res) => {
         try {
-            const user = await User.findById(req.params.id);
+            const user = await User.findById(req.params.id).populate(
+                "cart",
+                "_id product_id name_product price price_discount color"
+            );
             const { password, accept_password, ...others } = user._doc;
             res.status(200).json({ ...others });
         } catch (error) {
@@ -53,6 +56,21 @@ const userController = {
             // );
             await User.findByIdAndDelete(req.params.id);
             res.status(200).json("Deleted User Successfully");
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    },
+
+    // [POST] /user/addToCart/:id  (Add 1 product when user click add to cart) :id cua user
+    addToCart: async (req, res) => {
+        try {
+            const user = await User.findById(req.params.id);
+            await user.updateOne({
+                $push: {
+                    cart: req.body.productId,
+                },
+            });
+            res.status(200).json("Thêm sản phẩm thành công!!");
         } catch (error) {
             res.status(500).json(error);
         }
