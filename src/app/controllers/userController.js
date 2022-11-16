@@ -14,10 +14,8 @@ const userController = {
     // [GET] /user/:id (get detail one user)
     getOneUser: async (req, res) => {
         try {
-            const user = await User.findById(req.params.id).populate(
-                "cart",
-                "_id product_id name_product price price_discount color"
-            );
+            const user = await User.findById(req.params.id);
+
             const { password, accept_password, ...others } = user._doc;
             res.status(200).json({ ...others });
         } catch (error) {
@@ -67,10 +65,42 @@ const userController = {
             const user = await User.findById(req.params.id);
             await user.updateOne({
                 $push: {
-                    cart: req.body.productId,
+                    cart: {
+                        idProduct: req.body.idProduct,
+                        name: req.body.name,
+                        img: req.body.img,
+                        size: req.body.size,
+                        quatity: req.body.quatity,
+                        price: req.body.price,
+                    },
                 },
             });
             res.status(200).json("Thêm sản phẩm thành công!!");
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    },
+
+    // [PUT] /user/changeItemCart/:id   (change quatity item when item same type  OR use delete item)
+    changeItemCart: async (req, res) => {
+        try {
+            const user = await User.findById(req.params.id);
+            const idProduct = req.body.idProduct;
+            const size = req.body.size;
+            await user.cart.map(async (item) => {
+                if (item.idProduct === idProduct && item.size === size) {
+                    await user.updateOne({
+                        $pull: {
+                            cart: {
+                                idProduct: item.idProduct,
+                                size: item.size,
+                            },
+                        },
+                    });
+                }
+            });
+
+            return res.status(200).json("Cập nhật giỏ hàng thành công!!");
         } catch (error) {
             res.status(500).json(error);
         }

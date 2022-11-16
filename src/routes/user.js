@@ -26,4 +26,7 @@ router.delete(
 // Add item to Cart
 router.post("/addToCart/:id", userController.addToCart);
 
+// Change item from Cart
+router.put("/changeItemCart/:id", userController.changeItemCart);
+
 module.exports = router;
