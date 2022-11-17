@@ -8,6 +8,8 @@ const receiptEnterDetailRouter = require("./receiptEnterDetails");
 const receiptEnterWarehouseRouter = require("./receiptEnterWarehouses");
 const authRouter = require("./auth");
 const userRouter = require("./user");
+const orderRouter = require("./orders");
+const orderDetailRouter = require("./orderDetails");
 
 function route(app) {
     app.use("/product", productRouter);
@@ -18,6 +20,8 @@ function route(app) {
     app.use("/warehouse", warehouseRouter);
     app.use("/auth", authRouter);
     app.use("/user", userRouter);
+    app.use("/order", orderRouter);
+    app.use("/orderDetail", orderDetailRouter);
 }
 
 module.exports = route;

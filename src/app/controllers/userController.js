@@ -14,7 +14,10 @@ const userController = {
     // [GET] /user/:id (get detail one user)
     getOneUser: async (req, res) => {
         try {
-            const user = await User.findById(req.params.id);
+            const user = await User.findById(req.params.id).populate(
+                "orders",
+                "_id receiverName phone address city ward methodPayment totalPrice"
+            );
 
             const { password, accept_password, ...others } = user._doc;
             res.status(200).json({ ...others });
