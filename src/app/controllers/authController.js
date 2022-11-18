@@ -7,6 +7,14 @@ const authController = {
     // [POST] /user/register (sign up)
     registerUser: async (req, res) => {
         try {
+            // check phone already exists
+            const userHaved = await User.find({ phone: req.body.phone });
+            // console.log("user da dang ki 1:  ", userHaved);
+            if (userHaved[0]) {
+                res.status(400).json("Số điện thoại đã được đăng kí");
+                return;
+            }
+
             // hash password
             const salt = await bcrypt.genSalt(10);
             const hashed_password = await bcrypt.hash(req.body.password, salt);
@@ -20,6 +28,7 @@ const authController = {
                 );
                 return;
             }
+
             // Create new user
             const newUser = await new User({
                 fullname: req.body.fullname,
