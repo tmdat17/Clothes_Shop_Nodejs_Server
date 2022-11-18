@@ -30,6 +30,10 @@ const orderSchema = new Schema(
             type: String,
             require: true,
         },
+        district: {
+            type: String,
+            require: true,
+        },
         ward: {
             type: String,
             require: true,

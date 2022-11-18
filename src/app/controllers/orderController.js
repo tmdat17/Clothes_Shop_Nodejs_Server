@@ -36,10 +36,9 @@ const orderController = {
     // [GET] /order/   (Get all OrderDetail)
     getAllOrderDetail: async (req, res) => {
         try {
-            const order = await Order.find().populate(
-                "user",
-                "fullname phone birthday orders admin"
-            );
+            const order = await Order.find()
+                .populate("orderDetails", "nameProduct size quatity price")
+                .populate("user", "fullname phone birthday orders admin");
             res.status(200).json(order);
         } catch (error) {
             res.status(500).json(error);
