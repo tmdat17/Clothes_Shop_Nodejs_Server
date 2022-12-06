@@ -16,7 +16,7 @@ const userController = {
         try {
             const user = await User.findById(req.params.id).populate(
                 "orders",
-                "_id receiverName phone address city ward methodPayment totalPrice"
+                "_id receiverName phone address city ward methodPayment totalPrice status createdAt"
             );
 
             const { password, accept_password, ...others } = user._doc;
