@@ -73,15 +73,25 @@ const productController = {
     updateProduct: async (req, res) => {
         try {
             const productNeedUpdate = await Product.findById(req.params.id);
-            await productNeedUpdate.updateOne({ $set: req.body });
+
             if (req.body.warehouses) {
-                req.body.warehouses.map(async (item) => {
+                // lấy tất cả các product trong các Warehouse cũ ra
+                productNeedUpdate.warehouses.map(async (item) => {
                     const warehouseItem = await Warehouse.findById(item);
                     await warehouseItem.updateOne({
+                        $pull: { products: req.params.id },
+                    });
+                });
+
+                // thêm các product vừa cập nhật cho các Warehouse mới
+                req.body.warehouses.map(async (item) => {
+                    const warehouseItem2 = await Warehouse.findById(item);
+                    await warehouseItem2.updateOne({
                         $push: { products: req.params.id },
                     });
                 });
             }
+            await productNeedUpdate.updateOne({ $set: req.body });
             res.status(200).json("Updated Product Successfully!!");
         } catch (error) {
             res.status(500).json(error);
